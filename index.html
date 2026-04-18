@@ -911,7 +911,7 @@ function openStory(storyId) {
   // 從 localStorage 讀取愛心 / 收藏狀態
   const liked = localStorage.getItem('liked_' + storyId) === 'true';
   const bookmarked = localStorage.getItem('bookmarked_' + storyId) === 'true';
-  const likeCount = parseInt(localStorage.getItem('likeCount_' + storyId)) || 0;
+  const likeCount = 0;
 
   document.getElementById('reader-title').textContent = story.title;
   document.getElementById('reader-cat').textContent = story.cat;
