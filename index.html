@@ -668,7 +668,7 @@ img { display: block; }
           <div class="card-stats">
             <span class="stat">
               <svg viewBox="0 0 16 16" fill="currentColor"><path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.281 8.717 2.01z"/></svg>
-              128
+              <span id="card-like-story-sunny">0</span>
             </span>
             <span class="stat">ch.1 已上線</span>
           </div>
@@ -687,7 +687,7 @@ img { display: block; }
           <div class="card-stats">
             <span class="stat">
               <svg viewBox="0 0 16 16" fill="currentColor"><path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.281 8.717 2.01z"/></svg>
-              83
+              <span id="card-like-story-creatures">0</span>
             </span>
           </div>
         </div>
@@ -988,6 +988,8 @@ function toggleLike() {
   localStorage.setItem('likeCount_' + currentStory, newCount);
   document.getElementById('like-count').textContent = newCount;
   document.getElementById('like-btn').classList.toggle('liked', newLiked);
+  const cardEl = document.getElementById('card-like-' + currentStory);
+  if (cardEl) cardEl.textContent = newCount;
 }
 
 function toggleBookmark() {
