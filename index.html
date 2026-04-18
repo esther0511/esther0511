@@ -983,7 +983,6 @@ function closeReader() {
 function toggleLike() {
   const liked = localStorage.getItem('liked_' + currentStory) === 'true';
   const newLiked = !liked;
-  const stored = parseInt(localStorage.getItem('likeCount_' + currentStory)) || 0;
   const newCount = newLiked ? 1 : 0;
   localStorage.setItem('liked_' + currentStory, newLiked);
   localStorage.setItem('likeCount_' + currentStory, newCount);
