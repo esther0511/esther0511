@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>馥裕的故事</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Noto+Serif+TC:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   ✦ 設定區 — 只需要改這裡
+   ============================================================ */
+:root {
+  --site-name: "馥裕的故事";
+  --site-handle: "@yuxing_._._";
+
+  /* 顏色 */
+  --bg: #080808;
+  --bg-card: #0f0f0f;
+  --bg-hover: #161616;
+  --border: rgba(255,255,255,0.1);
+  --border-hover: rgba(255,255,255,0.3);
+  --text-primary: #f0ede8;
+  --text-secondary: #888;
+  --text-muted: #444;
+  --accent: #f0ede8;
+  --like-color: #c06060;
+  --bookmark-color: #b89a60;
+}
+
+/* ============================================================
+   基礎樣式
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: 'Noto Serif TC', serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+button { cursor: pointer; font-family: inherit; }
+input, textarea { font-family: inherit; }
+img { display: block; }
+
+/* ============================================================
+   頂部導覽列
+   ============================================================ */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(8,8,8,0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+}
+
+.site-logo {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.site-logo .name {
+  font-family: 'Cormorant Garamond', 'Noto Serif TC', serif;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.site-logo .handle {
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+.topbar-nav {
+  display: flex;
+  gap: 4px;
+}
+
+.nav-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  transition: all 0.2s;
+}
+
+.nav-btn:hover { color: var(--text-primary); border-color: var(--border); }
+.nav-btn.active { color: var(--text-primary); border-color: var(--border-hover); }
+
+/* ============================================================
+   分類篩選列
+   ============================================================ */
+.category-bar {
+  display: flex;
+  gap: 8px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.category-bar::-webkit-scrollbar { display: none; }
+
+.cat-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 5px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  transition: all 0.2s;
+  font-family: 'Noto Serif TC', serif;
+}
+
+.cat-btn:hover { color: var(--text-primary); border-color: var(--border-hover); }
+
+.cat-btn.active {
+  background: var(--text-primary);
+  color: var(--bg);
+  border-color: var(--text-primary);
+}
+
+/* ============================================================
+   故事卡片格線
+   ============================================================ */
+.stories-section { padding: 24px; }
+
+.section-label {
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+}
+
+.stories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.story-card {
+  cursor: pointer;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--bg-card);
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.story-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+}
+
+.story-card:active { transform: translateY(0); }
+
+.card-thumb {
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: #0a0a0a;
+  position: relative;
+}
+
+.card-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.story-card:hover .card-thumb img { transform: scale(1.03); }
+
+.card-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0,0,0,0.75);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: var(--text-secondary);
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  letter-spacing: 0.05em;
+}
+
+.card-badge.ongoing {
+  border-color: rgba(176,155,100,0.4);
+  color: var(--bookmark-color);
+}
+
+.card-info { padding: 12px 14px; }
+
+.card-cat {
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.card-stats {
+  display: flex;
+  gap: 12px;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.stat svg { width: 11px; height: 11px; flex-shrink: 0; }
+
+/* ============================================================
+   閱讀器
+   ============================================================ */
+.reader-page {
+  display: none;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+.reader-page.open { display: block; }
+
+.reader-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 20px;
+  height: 52px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(8,8,8,0.95);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.back-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  padding: 6px 0;
+  transition: color 0.15s;
+}
+
+.back-btn:hover { color: var(--text-primary); }
+.back-btn svg { width: 14px; height: 14px; }
+
+.reader-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.reader-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+}
+
+.reader-cat {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+.panel-counter {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 滑動提示 */
+.scroll-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 0 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  opacity: 1;
+  transition: opacity 0.5s;
+}
+.scroll-hint.hidden { opacity: 0; }
+.scroll-hint svg { width: 13px; height: 13px; }
+
+/* 格漫閱讀區 */
+.comic-strip {
+  display: flex;
+  overflow-x: auto;
+  padding: 16px 20px 20px;
+  gap: 2px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: #222 transparent;
+  cursor: grab;
+}
+.comic-strip:active { cursor: grabbing; }
+.comic-strip::-webkit-scrollbar { height: 3px; }
+.comic-strip::-webkit-scrollbar-track { background: transparent; }
+.comic-strip::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
+
+.comic-panel {
+  flex: 0 0 auto;
+  scroll-snap-align: center;
+  width: min(88vw, 420px);
+}
+
+.comic-panel img {
+  width: 100%;
+  height: auto;
+  border: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.panel-dot-row {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  padding: 10px 0 4px;
+}
+
+.panel-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: background 0.2s, transform 0.2s;
+}
+
+.panel-dot.active {
+  background: var(--text-primary);
+  transform: scale(1.3);
+}
+
+/* 互動列 */
+.action-bar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 16px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.action-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  transition: all 0.15s;
+}
+.action-btn:hover { color: var(--text-primary); background: var(--bg-hover); }
+.action-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+.action-btn.liked { color: var(--like-color); }
+.action-btn.bookmarked { color: var(--bookmark-color); }
+
+.share-feedback {
+  margin-left: auto;
+  font-size: 11px;
+  color: #5a8a5a;
+  padding: 4px 10px;
+  border: 1px solid #2a4a2a;
+  border-radius: 20px;
+  background: #0a180a;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.share-feedback.show { opacity: 1; }
+
+/* 留言區 */
+.comment-section {
+  padding: 20px 20px 32px;
+}
+
+.comment-heading {
+  font-size: 13px;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.utterances-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  letter-spacing: 0.03em;
+}
+
+.utterances {
+  max-width: 100% !important;
+}
+
+.comment-input-area {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.comment-input {
+  flex: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.comment-input:focus { border-color: var(--border-hover); }
+.comment-input::placeholder { color: var(--text-muted); }
+
+.comment-send {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 13px;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.comment-send:hover { border-color: var(--border-hover); color: var(--text-primary); }
+
+.comment-list { display: flex; flex-direction: column; gap: 16px; }
+
+.comment-item { display: flex; gap: 10px; }
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #1a1a1a;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.comment-body { flex: 1; }
+
+.comment-author {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 3px;
+}
+
+.comment-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ============================================================
+   關於頁
+   ============================================================ */
+.about-page {
+  display: none;
+  padding: 48px 24px;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.about-page.open { display: block; }
+
+.about-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.about-handle {
+  font-size: 13px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  margin-bottom: 32px;
+}
+
+.about-desc {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.9;
+  margin-bottom: 32px;
+  border-left: 1px solid var(--border);
+  padding-left: 20px;
+}
+
+.about-cats {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.about-cat-item {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.about-cat-label {
+  font-size: 13px;
+  color: var(--text-primary);
+  white-space: nowrap;
+  letter-spacing: 0.05em;
+}
+
+.about-cat-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ============================================================
+   動畫
+   ============================================================ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.story-card {
+  animation: fadeUp 0.4s ease both;
+}
+
+.story-card:nth-child(1) { animation-delay: 0.05s; }
+.story-card:nth-child(2) { animation-delay: 0.1s; }
+.story-card:nth-child(3) { animation-delay: 0.15s; }
+.story-card:nth-child(4) { animation-delay: 0.2s; }
+.story-card:nth-child(5) { animation-delay: 0.25s; }
+.story-card:nth-child(6) { animation-delay: 0.3s; }
+
+/* ============================================================
+   RWD
+   ============================================================ */
+@media (max-width: 480px) {
+  .topbar { padding: 0 16px; }
+  .stories-section { padding: 16px; }
+  .stories-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .topbar-nav { gap: 2px; }
+  .nav-btn { padding: 5px 10px; font-size: 12px; }
+  .comic-panel { width: 92vw; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+   頂部導覽列
+   ============================================================ -->
+<header class="topbar">
+  <div class="site-logo" onclick="showHome()" style="cursor:pointer">
+    <span class="name">馥裕的故事</span>
+    <span class="handle">@yuxing_._._</span>
+  </div>
+  <nav class="topbar-nav">
+    <button class="nav-btn active" id="nav-home" onclick="showHome()">首頁</button>
+    <button class="nav-btn" id="nav-about" onclick="showAbout()">關於</button>
+  </nav>
+</header>
+
+<!-- ============================================================
+   首頁
+   ============================================================ -->
+<main id="home-page">
+
+  <!-- 分類篩選 -->
+  <div class="category-bar">
+    <button class="cat-btn active" onclick="filterCat(this,'all')">全部</button>
+    <button class="cat-btn" onclick="filterCat(this,'short')">短篇圖文</button>
+    <button class="cat-btn" onclick="filterCat(this,'series')">長篇連載</button>
+    <button class="cat-btn" onclick="filterCat(this,'sketch')">日常手記</button>
+  </div>
+
+  <!-- 故事格線 -->
+  <section class="stories-section">
+    <div class="section-label" id="grid-label">全部作品</div>
+    <div class="stories-grid" id="stories-grid">
+
+      <!-- ✦ 故事卡片 1 — 短篇圖文 -->
+      <div class="story-card" data-cat="short" data-story="story-shining" onclick="openStory('story-shining')">
+        <div class="card-thumb">
+          <img src="images/shining/01.jpg" alt="I want to stop shining 封面" loading="lazy">
+          <span class="card-badge">5 格</span>
+        </div>
+        <div class="card-info">
+          <div class="card-cat">短篇圖文</div>
+          <div class="card-title">I want to stop shining</div>
+          <div class="card-stats">
+            <span class="stat">
+              <svg viewBox="0 0 16 16" fill="currentColor"><path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.281 8.717 2.01z"/></svg>
+              47
+            </span>
+            <span class="stat">
+              <svg viewBox="0 0 16 16" fill="currentColor"><path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/></svg>
+              12
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✦ 故事卡片 2 — 長篇連載 -->
+      <div class="story-card" data-cat="series" data-story="story-sunny" onclick="openStory('story-sunny')">
+        <div class="card-thumb">
+          <img src="images/sunny/cover.jpg" alt="晴的世界封面" loading="lazy">
+          <span class="card-badge ongoing">連載中</span>
+        </div>
+        <div class="card-info">
+          <div class="card-cat">長篇連載</div>
+          <div class="card-title">晴的世界</div>
+          <div class="card-stats">
+            <span class="stat">
+              <svg viewBox="0 0 16 16" fill="currentColor"><path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.281 8.717 2.01z"/></svg>
+              128
+            </span>
+            <span class="stat">ch.1 已上線</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✦ 故事卡片 3 — 短篇圖文 -->
+      <div class="story-card" data-cat="short" data-story="story-creatures" onclick="openStory('story-creatures')">
+        <div class="card-thumb">
+          <img src="images/creatures/01.jpg" alt="Beautiful creatures 封面" loading="lazy">
+          <span class="card-badge">3 格</span>
+        </div>
+        <div class="card-info">
+          <div class="card-cat">短篇圖文</div>
+          <div class="card-title">Beautiful creatures</div>
+          <div class="card-stats">
+            <span class="stat">
+              <svg viewBox="0 0 16 16" fill="currentColor"><path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.281 8.717 2.01z"/></svg>
+              83
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✦ 之後在這裡繼續新增卡片，格式同上 -->
+
+    </div>
+  </section>
+</main>
+
+<!-- ============================================================
+   閱讀器頁面（每篇故事共用同一個閱讀器）
+   ============================================================ -->
+<div class="reader-page" id="reader-page">
+
+  <div class="reader-topbar">
+    <button class="back-btn" onclick="closeReader()">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/></svg>
+      返回
+    </button>
+    <div class="reader-meta">
+      <div class="reader-title" id="reader-title">標題</div>
+      <div class="reader-cat" id="reader-cat">分類</div>
+    </div>
+    <div class="panel-counter" id="panel-counter">1 / 1</div>
+  </div>
+
+  <div class="scroll-hint" id="scroll-hint">
+    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/></svg>
+    左右滑動閱讀
+  </div>
+
+  <div class="comic-strip" id="comic-strip"></div>
+
+  <div class="panel-dot-row" id="panel-dots"></div>
+
+  <div class="action-bar">
+    <button class="action-btn" id="like-btn" onclick="toggleLike()">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.281 8.717 2.01z"/></svg>
+      <span id="like-count">47</span>
+    </button>
+    <button class="action-btn" id="bookmark-btn" onclick="toggleBookmark()">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z"/></svg>
+      <span id="bookmark-label">收藏</span>
+    </button>
+    <button class="action-btn" onclick="scrollToComments()">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/></svg>
+      <span id="comment-count-btn">12</span>
+    </button>
+    <button class="action-btn" onclick="shareStory()">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5"/></svg>
+      分享
+    </button>
+    <div class="share-feedback" id="share-feedback">已複製連結</div>
+  </div>
+
+  <div class="comment-section" id="comment-section">
+    <div class="comment-heading">留言</div>
+    <div class="utterances-hint">請用 GitHub 帳號登入留言</div>
+    <div id="utterances-container"></div>
+  </div>
+
+</div>
+
+<!-- ============================================================
+   關於頁
+   ============================================================ -->
+<div class="about-page" id="about-page">
+  <div class="about-name">馥裕的故事</div>
+  <div class="about-handle">@yuxing_._._</div>
+  <p class="about-desc">
+    這裡是馥宇的創作空間。<br>
+    用圖與文，記下某些一閃而過的概念和感受。
+  </p>
+  <div class="about-cats">
+    <div class="about-cat-item">
+      <span class="about-cat-label">短篇圖文</span>
+      <span class="about-cat-desc">某個想法，某個概念，幾格說完的小故事</span>
+    </div>
+    <div class="about-cat-item">
+      <span class="about-cat-label">長篇連載</span>
+      <span class="about-cat-desc">《晴的世界》— 每篇獨立，卻共享同一條主線</span>
+    </div>
+    <div class="about-cat-item">
+      <span class="about-cat-label">日常手記</span>
+      <span class="about-cat-desc">隨手畫下的插圖、海報、日常的碎片</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+   JavaScript — 故事資料庫 & 互動邏輯
+   ============================================================ -->
+<script>
+
+/* ============================================================
+   ✦ 故事資料庫 — 新增故事只要在這裡加一筆
+   ============================================================
+
+   格式：
+   'story-id': {
+     title:    '故事標題',
+     cat:      '分類（短篇圖文 / 長篇連載 / 日常手記）',
+     catKey:   'short / series / sketch',
+     panels:   ['圖片路徑1', '圖片路徑2', ...],
+     likes:    數字,
+     comments: 數字,
+   }
+   ============================================================ */
+const STORIES = {
+  'story-shining': {
+    title: 'I want to stop shining',
+    cat: '短篇圖文',
+    catKey: 'short',
+    panels: [
+      'images/shining/01.jpg',
+      'images/shining/02.jpg',
+      'images/shining/03.jpg',
+      'images/shining/04.jpg',
+      'images/shining/05.jpg',
+    ],
+    likes: 47,
+    comments: 12,
+  },
+  'story-sunny': {
+    title: '晴的世界',
+    cat: '長篇連載',
+    catKey: 'series',
+    panels: [
+      'images/sunny/ch1-01.jpg',
+      'images/sunny/ch1-02.jpg',
+      'images/sunny/ch1-03.jpg',
+    ],
+    likes: 128,
+    comments: 34,
+  },
+  'story-creatures': {
+    title: 'Beautiful creatures',
+    cat: '短篇圖文',
+    catKey: 'short',
+    panels: [
+      'images/creatures/01.jpg',
+      'images/creatures/02.jpg',
+      'images/creatures/03.jpg',
+    ],
+    likes: 83,
+    comments: 8,
+  },
+};
+
+/* ============================================================
+   ✦ Utterances 留言設定 — 填入你的 GitHub 帳號和 repo 名稱
+   ============================================================ */
+const GITHUB_USER = 'your-github-username';   // ← 填你的 GitHub 帳號
+const GITHUB_REPO = 'your-github-username.github.io'; // ← 填你的 repo 名稱
+
+/* ============================================================
+   狀態
+   ============================================================ */
+let currentStory = null;
+
+/* ============================================================
+   頁面切換
+   ============================================================ */
+function showHome() {
+  document.getElementById('home-page').style.display = '';
+  document.getElementById('reader-page').classList.remove('open');
+  document.getElementById('about-page').classList.remove('open');
+  document.getElementById('nav-home').classList.add('active');
+  document.getElementById('nav-about').classList.remove('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showAbout() {
+  document.getElementById('home-page').style.display = 'none';
+  document.getElementById('reader-page').classList.remove('open');
+  document.getElementById('about-page').classList.add('open');
+  document.getElementById('nav-home').classList.remove('active');
+  document.getElementById('nav-about').classList.add('active');
+  window.scrollTo({ top: 0 });
+}
+
+/* ============================================================
+   分類篩選
+   ============================================================ */
+function filterCat(el, cat) {
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+
+  const labelMap = {
+    all: '全部作品',
+    short: '短篇圖文',
+    series: '長篇連載',
+    sketch: '日常手記',
+  };
+  document.getElementById('grid-label').textContent = labelMap[cat];
+
+  document.querySelectorAll('.story-card').forEach(card => {
+    const show = cat === 'all' || card.dataset.cat === cat;
+    card.style.display = show ? '' : 'none';
+  });
+}
+
+/* ============================================================
+   開啟故事閱讀器
+   ============================================================ */
+function openStory(storyId) {
+  const story = STORIES[storyId];
+  if (!story) return;
+  currentStory = storyId;
+
+  // 從 localStorage 讀取愛心 / 收藏狀態
+  const liked = localStorage.getItem('liked_' + storyId) === 'true';
+  const bookmarked = localStorage.getItem('bookmarked_' + storyId) === 'true';
+  const likeCount = parseInt(localStorage.getItem('likeCount_' + storyId)) || story.likes;
+
+  document.getElementById('reader-title').textContent = story.title;
+  document.getElementById('reader-cat').textContent = story.cat;
+  document.getElementById('like-count').textContent = likeCount;
+  document.getElementById('like-btn').classList.toggle('liked', liked);
+  document.getElementById('bookmark-btn').classList.toggle('bookmarked', bookmarked);
+  document.getElementById('bookmark-label').textContent = bookmarked ? '已收藏' : '收藏';
+  document.getElementById('comment-count-btn').textContent = '留言';
+
+  const strip = document.getElementById('comic-strip');
+  strip.innerHTML = '';
+  story.panels.forEach((src, i) => {
+    const div = document.createElement('div');
+    div.className = 'comic-panel';
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = story.title + ' 第' + (i + 1) + '格';
+    img.loading = 'lazy';
+    div.appendChild(img);
+    strip.appendChild(div);
+  });
+
+  const total = story.panels.length;
+  const dotsEl = document.getElementById('panel-dots');
+  dotsEl.innerHTML = '';
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'panel-dot' + (i === 0 ? ' active' : '');
+    dotsEl.appendChild(dot);
+  }
+  document.getElementById('panel-counter').textContent = '1 / ' + total;
+
+  // 載入 Utterances 留言
+  const container = document.getElementById('utterances-container');
+  container.innerHTML = '';
+  const script = document.createElement('script');
+  script.src = 'https://utteranc.es/client.js';
+  script.setAttribute('repo', GITHUB_USER + '/' + GITHUB_REPO);
+  script.setAttribute('issue-term', storyId);
+  script.setAttribute('theme', 'photon-dark');
+  script.setAttribute('crossorigin', 'anonymous');
+  script.async = true;
+  container.appendChild(script);
+
+  document.getElementById('home-page').style.display = 'none';
+  document.getElementById('about-page').classList.remove('open');
+  document.getElementById('reader-page').classList.add('open');
+  document.getElementById('scroll-hint').classList.remove('hidden');
+  strip.scrollLeft = 0;
+  window.scrollTo({ top: 0 });
+
+  setTimeout(() => {
+    document.getElementById('scroll-hint').classList.add('hidden');
+  }, 3000);
+}
+
+function closeReader() {
+  document.getElementById('reader-page').classList.remove('open');
+  document.getElementById('home-page').style.display = '';
+  window.scrollTo({ top: 0 });
+}
+
+/* ============================================================
+   格漫分頁指示點
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', () => {
+  const strip = document.getElementById('comic-strip');
+  strip.addEventListener('scroll', () => {
+    if (!currentStory) return;
+    const total = STORIES[currentStory].panels.length;
+    const panelWidth = strip.querySelector('.comic-panel')?.offsetWidth || 1;
+    const index = Math.round(strip.scrollLeft / (panelWidth + 2));
+    const clamped = Math.max(0, Math.min(total - 1, index));
+    document.querySelectorAll('.panel-dot').forEach((d, i) => {
+      d.classList.toggle('active', i === clamped);
+    });
+    document.getElementById('panel-counter').textContent = (clamped + 1) + ' / ' + total;
+  });
+});
+
+/* ============================================================
+   互動功能
+   ============================================================ */
+function toggleLike() {
+  const liked = localStorage.getItem('liked_' + currentStory) === 'true';
+  const newLiked = !liked;
+  const story = STORIES[currentStory];
+  const base = parseInt(localStorage.getItem('likeCount_' + currentStory)) || story.likes;
+  const newCount = newLiked ? story.likes + 1 : story.likes;
+  localStorage.setItem('liked_' + currentStory, newLiked);
+  localStorage.setItem('likeCount_' + currentStory, newCount);
+  document.getElementById('like-count').textContent = newCount;
+  document.getElementById('like-btn').classList.toggle('liked', newLiked);
+}
+
+function toggleBookmark() {
+  const bookmarked = localStorage.getItem('bookmarked_' + currentStory) === 'true';
+  const newBookmarked = !bookmarked;
+  localStorage.setItem('bookmarked_' + currentStory, newBookmarked);
+  document.getElementById('bookmark-btn').classList.toggle('bookmarked', newBookmarked);
+  document.getElementById('bookmark-label').textContent = newBookmarked ? '已收藏' : '收藏';
+}
+
+function scrollToComments() {
+  document.getElementById('comment-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+function shareStory() {
+  const url = window.location.href;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url);
+  }
+  const el = document.getElementById('share-feedback');
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+</script>
+</body>
+</html>
